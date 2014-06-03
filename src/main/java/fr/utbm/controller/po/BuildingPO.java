@@ -14,6 +14,12 @@ public class BuildingPO {
         this.nbFloors = nbFloors;
     }    
 
+    public BuildingPO(Building b) {
+        this.id = b.getId();
+        this.name = b.getName();
+        this.nbFloors = b.getMaps().size();
+    }    
+
     public Integer getId() {
         return id;
     }

@@ -34,7 +34,8 @@ public class BuildingsController {
         ArrayList<BuildingPO> buildings = new ArrayList<BuildingPO>();
         for (Building b : buildingService.getAllBuildings()) {
             System.out.println(b.toString());
-            buildings.add(new BuildingPO(b, mapService.getMapsForBuildingID(b.getId()).size()));
+            //buildings.add(new BuildingPO(b, mapService.getMapsForBuildingID(b.getId()).size()));
+            buildings.add(new BuildingPO(b));
         }
         return new Gson().toJson(buildings);
     }
@@ -52,7 +53,7 @@ public class BuildingsController {
             return json.toString();
         }
         json.addProperty("success", Boolean.TRUE);
-        json.addProperty("data", new Gson().toJson(new BuildingPO(newBuilding, mapService.getMapsForBuildingID(newBuilding.getId()).size())));
+        json.addProperty("data", new Gson().toJson(new BuildingPO(newBuilding, 0)));
         return json.toString();
     }
 

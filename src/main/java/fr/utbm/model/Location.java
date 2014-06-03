@@ -1,11 +1,17 @@
 package fr.utbm.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -14,7 +20,8 @@ public class Location implements Serializable {
     public static final String ID = "id";
     public static final String X = "x";
     public static final String Y = "y";
-    public static final String MAP_ID = "mapId";
+    public static final String MAP = "map";
+    public static final String RSSIS = "rssis";
     
     
     @Id
@@ -27,18 +34,32 @@ public class Location implements Serializable {
     @Column(name = Y, nullable = false)
     private Double y;
     
-    @Column(name = MAP_ID, nullable = false)
-    private Integer mapId;
+    //@Column(name = MAP_ID, nullable = false)
+    //private Integer mapId;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = MAP, nullable = false)
+    private Map map;
+    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = Rssi.LOCATION_ID)
+    private Set<Rssi> rssis = new HashSet<Rssi>();
+    
 
     public Location() {
     }
 
-    public Location(Integer id, Double x, Double y, Integer mapId) {
+    /**public Location(Integer id, Double x, Double y, Integer mapId) {
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.mapId = mapId;
+    }**/
+    public Location(Integer id, Double x, Double y, Map map) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.mapId = mapId;
-    }
+        this.map = map;
+    }    
 
     public Integer getId() {
         return id;
@@ -64,13 +85,29 @@ public class Location implements Serializable {
         this.y = y;
     }
 
-    public Integer getMapId() {
-        return mapId;
+    /**public Integer getMapId() {
+    return mapId;
+    }
+    public void setMapId(Integer mapId) {
+    this.mapId = mapId;
+    }**/
+    public Map getMap() {
+        return map;
     }
 
-    public void setMapId(Integer mapId) {
-        this.mapId = mapId;
+    public void setMap(Map map) {
+        this.map = map;
+    } 
+
+    public Set<Rssi> getRssis() {
+        return rssis;
     }
+
+    public void setRssis(HashSet<Rssi> rssis) {
+        this.rssis = rssis;
+    }
+    
+    
 
     @Override
     public int hashCode() {
@@ -96,6 +133,6 @@ public class Location implements Serializable {
 
     @Override
     public String toString() {
-        return "Location{" + "id=" + id + ", x=" + x + ", y=" + y + ", mapId=" + mapId + '}';
+        return "Location{" + "id=" + id + ", x=" + x + ", y=" + y + ", map=" + map.getId() + '}';
     }
 }

@@ -3,6 +3,7 @@ package fr.utbm.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.utbm.controller.po.MapPO;
+import fr.utbm.dao.exception.BuildingInexistantException;
 import fr.utbm.dao.exception.MapAlreadyExistsException;
 import fr.utbm.dao.exception.MapInUseException;
 import fr.utbm.dao.exception.MapInexistantException;
@@ -13,6 +14,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.annotation.Resource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,16 +48,20 @@ public class MapsController {
     String addMap(@PathVariable Integer id, @RequestParam String name, @RequestParam Integer pxWidth, @RequestParam Integer pxHeight, Locale l) {
         JsonObject json = new JsonObject();
         Map newMap = new Map();
-        newMap.setDescription(name);
-        newMap.setBuilding(id);
-        newMap.setPxHeight(pxHeight);
-        newMap.setPxWidth(pxWidth);
-
         try {
+            newMap.setDescription(name);
+            newMap.setBuilding(buildingService.getBuildingByID(id));
+            newMap.setPxHeight(pxHeight);
+            newMap.setPxWidth(pxWidth);
+
             newMap = mapService.createMap(newMap);
         } catch (MapAlreadyExistsException e) {
             json.addProperty("success", Boolean.FALSE);
             json.addProperty("exception", "Map already exists : " + e.getName());
+            return json.toString();
+        } catch (BuildingInexistantException e) {
+            json.addProperty("success", Boolean.FALSE);
+            json.addProperty("exception", "Building inexistant : " + e.getId());
             return json.toString();
         }
         json.addProperty("success", Boolean.TRUE);
@@ -76,6 +82,9 @@ public class MapsController {
         } catch (MapInUseException e) {
             json.addProperty("success", Boolean.FALSE);
             json.addProperty("exception", "Map in use : " + e.getId());
+        } catch (DataIntegrityViolationException e) {
+            json.addProperty("success", Boolean.FALSE);
+            json.addProperty("exception", "Map in use : " + id);
         }
         return json.toString();
     }
@@ -93,19 +102,23 @@ public class MapsController {
         JsonObject json = new JsonObject();
         
         Map newMap = new Map();
-        newMap.setDescription(name);
-        newMap.setBuilding(idBuilding);
-        newMap.setPxHeight(0);
-        newMap.setPxWidth(0);
-
         try {
+            newMap.setDescription(name);
+            newMap.setBuilding(buildingService.getBuildingByID(idBuilding));
+            newMap.setPxHeight(0);
+            newMap.setPxWidth(0);
+
             newMap = mapService.createMap(newMap);
         } catch (MapAlreadyExistsException e) {
             json.addProperty("success", Boolean.FALSE);
             json.addProperty("exception", "Map already exists : " + e.getName());
             return json.toString();
+        } catch (BuildingInexistantException e) {
+            json.addProperty("success", Boolean.FALSE);
+            json.addProperty("exception", "Building inexistant : " + e.getId());
+            return json.toString();
         }
-
+        
         try {
             String fullFileName = "C:/images/" + idBuilding + "_" + newMap.getId() + ".jpg";
             FileOutputStream fos = new FileOutputStream(fullFileName);

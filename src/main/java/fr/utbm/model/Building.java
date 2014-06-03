@@ -1,12 +1,16 @@
 package fr.utbm.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,15 +26,13 @@ public class Building implements Serializable {
     @Column(name = NAME, columnDefinition = "nvarchar(100)", unique = true, nullable = false)
     private String name;
     
-    /**
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "building")
-    private Set<Map> maps = new HashSet<Map>(0);
-    **/
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = Map.BUILDING_ID)
+    private Set<Map> maps = new HashSet<Map>();
+    
     public Building() {
     }
 
-    public Building(Integer id, String name) {
-        this.id = id;
+    public Building(String name) {
         this.name = name;
     }
     
@@ -56,20 +58,18 @@ public class Building implements Serializable {
         this.name = name;
     }
 
-    /**public Set<Map> getMaps() {
+    public Set<Map> getMaps() {
         return maps;
     }
 
     public void setMaps(Set<Map> maps) {
         this.maps = maps;
-    }**/
-    
-    
+    }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 5;
+        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
 
@@ -82,9 +82,12 @@ public class Building implements Serializable {
             return false;
         }
         final Building other = (Building) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
         return true;
     }
+    
+    
+
 }

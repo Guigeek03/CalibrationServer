@@ -5,21 +5,21 @@ import javax.annotation.Resource;
 import org.springframework.context.MessageSource;
 
 
-public class BuildingInUseException extends Exception {
+public class AccessPointInUseException extends Exception {
 
         @Resource
     private MessageSource messageSource;
         
     private Integer id;
-    private String name;
+    private String macAddr;
     
-    public BuildingInUseException(Integer id, String name) {
+    public AccessPointInUseException(Integer id, String macAddr) {
         this.id = id;
-        this.name = name;
+        this.macAddr = macAddr;
     }
     
     public String getMessage(Locale l) {
-        return messageSource.getMessage("BuildingInUseException", new Object[] {id, name}, l);
+        return messageSource.getMessage("BuildingInUseException", new Object[] {id, macAddr}, l);
     }
 
     public Integer getId() {
@@ -30,12 +30,12 @@ public class BuildingInUseException extends Exception {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getMacAddr() {
+        return macAddr;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMacAddr(String macAddr) {
+        this.macAddr = macAddr;
     }
     
     

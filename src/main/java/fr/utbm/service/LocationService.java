@@ -1,20 +1,21 @@
 package fr.utbm.service;
 
+import fr.utbm.dao.exception.LocationAlreadyExistsException;
+import fr.utbm.dao.exception.LocationInUseException;
+import fr.utbm.dao.exception.LocationInexistantException;
 import fr.utbm.model.Location;
 import java.util.List;
 
 public interface LocationService {
 
-    public Location createLocation(Location location);
+    public Location createLocation(Location location) throws LocationAlreadyExistsException;
 
-    public void updateLocation(Integer id, Double newX, Double newY, Integer newMapID);
+    public void deleteLocationById(Integer id)  throws LocationInUseException, LocationInexistantException;
 
-    public void deleteLocationById(Integer id);
-
-    public void deleteLocation(Location location);
+    public void deleteLocation(Location location) throws LocationInUseException;
 
     public List<Location> getAllLocations();
 
-    public Location getLocationByID(Integer id);
+    public Location getLocationByID(Integer id)  throws LocationInexistantException ;
 
 }

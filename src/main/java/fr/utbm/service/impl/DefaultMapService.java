@@ -2,6 +2,7 @@ package fr.utbm.service.impl;
 
 import fr.utbm.dao.BuildingDao;
 import fr.utbm.dao.MapDao;
+import fr.utbm.dao.exception.BuildingInexistantException;
 import fr.utbm.dao.exception.MapAlreadyExistsException;
 import fr.utbm.dao.exception.MapInUseException;
 import fr.utbm.dao.exception.MapInexistantException;
@@ -29,13 +30,15 @@ public class DefaultMapService implements MapService {
 
     @Override
     public Map createMap(Map map) throws MapAlreadyExistsException {
-        Map m = getMapByName(map.getDescription());
-        if (!m.getDescription().equals("DEFAULT")) {
-            throw new MapAlreadyExistsException(m.getId(), m.getDescription(), m.getBuilding());
-        } else {
+        Map m = null;
+        try {
+            m = getMapByName(map.getDescription());
+        } catch(MapInexistantException e) {
             mapDao.save(map);
+            return map;
         }
-        return map;
+        
+        throw new MapAlreadyExistsException(m.getId(), m.getDescription(), m.getBuilding().getId());
     }
 
     @Override
@@ -53,7 +56,7 @@ public class DefaultMapService implements MapService {
         try {
             mapDao.delete(map);
         } catch (ConstraintViolationException e) {
-            throw new MapInUseException(map.getId(), map.getDescription(), map.getBuilding());
+            throw new MapInUseException(map.getId(), map.getDescription(), map.getBuilding().getId());
         }
     }
 
@@ -76,19 +79,19 @@ public class DefaultMapService implements MapService {
     }
 
     @Override
-    public Map getMapByName(String name) {
+    public Map getMapByName(String name) throws MapInexistantException {
         Map map = mapDao.getMapByName(name);
         if (map == null) {
-            return new Map("DEFAULT", 0, 0, 0., 0., "", 0);
+            throw new MapInexistantException(0, name, 0);
         }
         return map;
     }
 
     @Override
-    public Map getMapByID(Integer id) {
+    public Map getMapByID(Integer id) throws MapInexistantException {
         Map map = mapDao.getMapByID(id);
         if (map == null) {
-            return new Map("DEFAULT", 0, 0, 0., 0., "", 0);
+            throw new MapInexistantException(id, "", 0);
         }
         return map;
     }

@@ -18,8 +18,8 @@ public interface MapService {
     
     public List<Map> getMapsForBuildingID(Integer id);
 
-    public Map getMapByName(String name);
+    public Map getMapByName(String name) throws MapInexistantException;
 
-    public Map getMapByID(Integer id);
+    public Map getMapByID(Integer id) throws MapInexistantException;
 
 }

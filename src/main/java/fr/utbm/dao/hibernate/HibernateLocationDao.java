@@ -18,7 +18,7 @@ public class HibernateLocationDao extends HibernateDao<Location> implements Loca
     }
 
     @Override
-    public Location getAccessPointByID(Integer id) {
+    public Location getLocationByID(Integer id) {
         return (Location) getSession().createCriteria(Location.class).add(Restrictions.eq(Location.ID, id)).uniqueResult();
     }    
 }

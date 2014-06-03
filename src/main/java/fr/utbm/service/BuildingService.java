@@ -14,12 +14,12 @@ public interface BuildingService {
 
     public void deleteBuildingById(Integer id) throws BuildingInexistantException, BuildingInUseException;
 
-    public void deleteBuilding(Building building) throws BuildingInexistantException, BuildingInUseException;
+    public void deleteBuilding(Building building) throws BuildingInUseException;
 
     public List<Building> getAllBuildings();
 
-    public Building getBuildingByName(String name);
+    public Building getBuildingByName(String name) throws BuildingInexistantException ;
 
-    public Building getBuildingByID(Integer id);
+    public Building getBuildingByID(Integer id) throws BuildingInexistantException ;
 
 }

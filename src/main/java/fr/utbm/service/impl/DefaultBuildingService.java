@@ -25,20 +25,22 @@ public class DefaultBuildingService implements BuildingService {
 
     @Override
     public Building createBuilding(Building building) throws BuildingAlreadyExistsException {
-        Building b = getBuildingByName(building.getName());
-        if (!b.getName().equals("DEFAULT")) {
-            throw new BuildingAlreadyExistsException(building.getId(), building.getName());
-        } else {
+        Building b = null;
+        try {
+            b = getBuildingByName(building.getName());
+        } catch (BuildingInexistantException e) {
             buildingDao.save(building);
+            return building;
         }
-        return building;
+        
+        throw new BuildingAlreadyExistsException(building.getId(), building.getName());
     }
 
     @Override
-    public Building getBuildingByID(Integer id) {
+    public Building getBuildingByID(Integer id) throws BuildingInexistantException {
         Building b = buildingDao.getBuildingByID(id);
         if (b == null) {
-            return new Building(0, "DEFAULT");
+            throw new BuildingInexistantException(id, "");
         }
         return b;
     }
@@ -70,7 +72,7 @@ public class DefaultBuildingService implements BuildingService {
     }
 
     @Override
-    public void deleteBuilding(Building building) throws BuildingInexistantException, BuildingInUseException {
+    public void deleteBuilding(Building building) throws BuildingInUseException {
         try {
             buildingDao.delete(building);
         } catch (ConstraintViolationException e) {
@@ -88,10 +90,10 @@ public class DefaultBuildingService implements BuildingService {
     }
 
     @Override
-    public Building getBuildingByName(String name) {
+    public Building getBuildingByName(String name) throws BuildingInexistantException {
         Building b = buildingDao.getBuildingByName(name);
         if (b == null) {
-            return new Building(0, "DEFAULT");
+            throw new BuildingInexistantException(0, name);
         }
         return b;
     }  

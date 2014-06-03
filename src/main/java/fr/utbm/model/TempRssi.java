@@ -3,9 +3,12 @@ package fr.utbm.model;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,7 +16,7 @@ import javax.persistence.Table;
 public class TempRssi implements Serializable {
     
     public static final String ID = "id";
-    public static final String ACCESS_POINT_ID = "idAp";
+    public static final String ACCESS_POINT_ID = "accessPoint";
     public static final String CLIENT_MAC = "clientMac";
     public static final String AVERAGE_VALUE = "avgVal";
 
@@ -22,8 +25,9 @@ public class TempRssi implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Column(name = ACCESS_POINT_ID, nullable = false)
-    private Integer accessPointId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = ACCESS_POINT_ID, nullable = false)
+    private AccessPoint accessPoint;
     
     @Column(name = CLIENT_MAC, columnDefinition = "nvarchar(18)", nullable = false)
     private String clientMac;
@@ -34,9 +38,9 @@ public class TempRssi implements Serializable {
     public TempRssi() {
     }
 
-    public TempRssi(Integer id, Integer accessPointId, String clientMac, Double averageValue) {
+    public TempRssi(Integer id, AccessPoint accessPoint, String clientMac, Double averageValue) {
         this.id = id;
-        this.accessPointId = accessPointId;
+        this.accessPoint = accessPoint;
         this.clientMac = clientMac;
         this.averageValue = averageValue;
     }
@@ -49,12 +53,12 @@ public class TempRssi implements Serializable {
         this.id = id;
     }
 
-    public Integer getAccessPointId() {
-        return accessPointId;
+    public AccessPoint getAccessPoint() {
+        return accessPoint;
     }
 
-    public void setAccessPointId(Integer accessPointId) {
-        this.accessPointId = accessPointId;
+    public void setAccessPoint(AccessPoint accessPoint) {
+        this.accessPoint = accessPoint;
     }
 
     public String getClientMac() {
@@ -76,8 +80,8 @@ public class TempRssi implements Serializable {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 17 * hash + (this.accessPointId != null ? this.accessPointId.hashCode() : 0);
+        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 97 * hash + (this.accessPoint != null ? this.accessPoint.hashCode() : 0);
         return hash;
     }
 
@@ -93,7 +97,7 @@ public class TempRssi implements Serializable {
         if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
-        if (this.accessPointId != other.accessPointId && (this.accessPointId == null || !this.accessPointId.equals(other.accessPointId))) {
+        if (this.accessPoint != other.accessPoint && (this.accessPoint == null || !this.accessPoint.equals(other.accessPoint))) {
             return false;
         }
         return true;
@@ -101,6 +105,8 @@ public class TempRssi implements Serializable {
 
     @Override
     public String toString() {
-        return "TempRssi{" + "id=" + id + ", accessPointId=" + accessPointId + ", clientMac=" + clientMac + ", averageValue=" + averageValue + '}';
+        return "TempRssi{" + "id=" + id + ", accessPoint=" + accessPoint + ", clientMac=" + clientMac + ", averageValue=" + averageValue + '}';
     }
+
+   
 }

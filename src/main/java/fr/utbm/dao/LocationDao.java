@@ -6,5 +6,5 @@ import java.util.List;
 public interface LocationDao extends Dao<Location> {
     public List<Location> getAllLocations();
     
-    public Location getAccessPointByID(Integer id);  
+    public Location getLocationByID(Integer id);  
 }

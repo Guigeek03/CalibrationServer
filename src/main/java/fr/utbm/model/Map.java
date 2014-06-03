@@ -1,15 +1,22 @@
 package fr.utbm.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "maps")
+@Table(name = "maps", uniqueConstraints = @UniqueConstraint(columnNames = {Map.BUILDING_ID, Map.DESCRIPTION}))
 public class Map implements Serializable {
 
     public static final String ID = "id";
@@ -43,11 +50,15 @@ public class Map implements Serializable {
     @Column(name = IMAGE_FILE, columnDefinition = "nvarchar(1000)")
     private String imageFile;
     
-    /**@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = BUILDING_ID, nullable = false)**/
-    @Column(name = BUILDING_ID, nullable = false)
-    private Integer building;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = BUILDING_ID, nullable = false)
+    private Building building;
+    //@Column(name = BUILDING_ID, nullable = false)
+    //private Integer building;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy=Location.MAP)
+    private Set<Location> locations = new HashSet<Location>();
+   
     public Map() {
         this.description = "";
         this.pxWidth = 0;
@@ -57,7 +68,8 @@ public class Map implements Serializable {
         this.imageFile = "";
     }
 
-   public Map(String description, Integer pxWidth, Integer pxHeight, Double metersWidth, Double metersHeight, String imageFile, Integer building) {
+   //public Map(String description, Integer pxWidth, Integer pxHeight, Double metersWidth, Double metersHeight, String imageFile, Integer building) {
+   public Map(String description, Integer pxWidth, Integer pxHeight, Double metersWidth, Double metersHeight, String imageFile, Building building) {
         this.description = description;
         this.pxWidth = pxWidth;
         this.pxHeight = pxHeight;
@@ -66,12 +78,12 @@ public class Map implements Serializable {
         this.imageFile = imageFile;
         this.building = building;
     }
-   
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 13 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 5;
+        hash = 89 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 89 * hash + (this.building != null ? this.building.hashCode() : 0);
         return hash;
     }
 
@@ -84,12 +96,15 @@ public class Map implements Serializable {
             return false;
         }
         final Map other = (Map) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
+            return false;
+        }
+        if (this.building != other.building && (this.building == null || !this.building.equals(other.building))) {
             return false;
         }
         return true;
     }
-
+    
     public Integer getId() {
         return id;
     }
@@ -146,12 +161,19 @@ public class Map implements Serializable {
         this.imageFile = imageFile;
     }
 
-    public Integer getBuilding() {
+    public Building getBuilding() {
         return building;
     }
 
-    public void setBuilding(Integer building) {
+    public void setBuilding(Building building) {
         this.building = building;
     }
 
+    public Set<Location> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<Location> locations) {
+        this.locations = locations;
+    }
 }

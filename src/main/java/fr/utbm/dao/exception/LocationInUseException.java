@@ -5,21 +5,19 @@ import javax.annotation.Resource;
 import org.springframework.context.MessageSource;
 
 
-public class BuildingInUseException extends Exception {
+public class LocationInUseException extends Exception {
 
         @Resource
     private MessageSource messageSource;
         
     private Integer id;
-    private String name;
     
-    public BuildingInUseException(Integer id, String name) {
+    public LocationInUseException(Integer id) {
         this.id = id;
-        this.name = name;
     }
     
     public String getMessage(Locale l) {
-        return messageSource.getMessage("BuildingInUseException", new Object[] {id, name}, l);
+        return messageSource.getMessage("LocationInUseException", new Object[] {id}, l);
     }
 
     public Integer getId() {
@@ -28,15 +26,5 @@ public class BuildingInUseException extends Exception {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    
+    }   
 }
