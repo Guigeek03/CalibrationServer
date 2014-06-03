@@ -13,9 +13,9 @@ import javax.persistence.Table;
 public class TempRssi implements Serializable {
     
     public static final String ID = "id";
-    public static final String ACCESS_POINT_ID = "id_ap";
-    public static final String CLIENT_MAC = "client_mac";
-    public static final String AVERAGE_VALUE = "avg_val";
+    public static final String ACCESS_POINT_ID = "idAp";
+    public static final String CLIENT_MAC = "clientMac";
+    public static final String AVERAGE_VALUE = "avgVal";
 
     
     @Id

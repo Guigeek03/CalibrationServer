@@ -10,14 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "rssi", uniqueConstraints = @UniqueConstraint(columnNames = {"id_ap", "id_loc"}))
+@Table(name = "rssi", uniqueConstraints = @UniqueConstraint(columnNames = {Rssi.ACCESS_POINT_ID, Rssi.LOCATION_ID}))
 public class Rssi implements Serializable {
 
     public static final String ID = "id";
-    public static final String ACCESS_POINT_ID = "id_ap";
-    public static final String LOCATION_ID = "id_loc";
-    public static final String AVERAGE_VALUE = "avg_val";
-    public static final String STANDARD_DEVIATION = "std_dev";
+    public static final String ACCESS_POINT_ID = "idAp";
+    public static final String LOCATION_ID = "idLoc";
+    public static final String AVERAGE_VALUE = "avgVal";
+    public static final String STANDARD_DEVIATION = "stdDev";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

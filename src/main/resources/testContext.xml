@@ -27,6 +27,8 @@
         <property name="password" value="${jdbc.password}" />
     </bean>
     
+    <bean id="namingStrategy" class="org.hibernate.cfg.ImprovedNamingStrategy" />
+    
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"></property>
         <property name="hibernateProperties">
@@ -45,6 +47,7 @@
             </props>
         </property>
         <property name="packagesToScan" value="fr.utbm.model"/>
+        <property name="namingStrategy" ref="namingStrategy" />
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>

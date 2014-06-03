@@ -14,11 +14,11 @@ public class Map implements Serializable {
 
     public static final String ID = "id";
     public static final String DESCRIPTION = "description";
-    public static final String PX_WIDTH = "px_width";
-    public static final String PX_HEIGHT = "px_height";
-    public static final String METERS_WIDTH = "meters_width";
-    public static final String METERS_HEIGHT = "meters_height";
-    public static final String IMAGE_FILE = "image_file";
+    public static final String PX_WIDTH = "pxWidth";
+    public static final String PX_HEIGHT = "pxHeight";
+    public static final String METERS_WIDTH = "metersWidth";
+    public static final String METERS_HEIGHT = "metersHeight";
+    public static final String IMAGE_FILE = "imageFile";
     public static final String BUILDING_ID = "building";
 
     @Id

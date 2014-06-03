@@ -14,7 +14,7 @@ public class Location implements Serializable {
     public static final String ID = "id";
     public static final String X = "x";
     public static final String Y = "y";
-    public static final String MAP_ID = "map_id";
+    public static final String MAP_ID = "mapId";
     
     
     @Id

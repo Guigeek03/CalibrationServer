@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Table(name = "accessPoints")
 public class AccessPoint implements Serializable {
     public static final String ID = "id";
-    public static final String MAC_ADDR = "mac_addr";
+    public static final String MAC_ADDR = "macAddr";
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
