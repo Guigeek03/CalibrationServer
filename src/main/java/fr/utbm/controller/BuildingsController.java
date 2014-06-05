@@ -33,7 +33,6 @@ public class BuildingsController {
     String getBuildings() {
         ArrayList<BuildingPO> buildings = new ArrayList<BuildingPO>();
         for (Building b : buildingService.getAllBuildings()) {
-            System.out.println(b.toString());
             //buildings.add(new BuildingPO(b, mapService.getMapsForBuildingID(b.getId()).size()));
             buildings.add(new BuildingPO(b));
         }

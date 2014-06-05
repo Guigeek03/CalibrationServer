@@ -10,12 +10,17 @@ import fr.utbm.dao.exception.MapInexistantException;
 import fr.utbm.model.Map;
 import fr.utbm.service.BuildingService;
 import fr.utbm.service.MapService;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -89,18 +94,11 @@ public class MapsController {
         return json.toString();
     }
 
-    @RequestMapping(value = "/upload/", method = RequestMethod.POST)
-    public @ResponseBody
-    String upload() {
-        JsonObject json = new JsonObject();
-        json.addProperty("success", Boolean.TRUE);
-        return json.toString();
-    }
-
     @RequestMapping(value = "/buildings/{idBuilding}/addMap", method = RequestMethod.POST)
-    public @ResponseBody String storeimages(@RequestPart("image") MultipartFile file, @PathVariable Integer idBuilding, @RequestParam String name) {
+    public @ResponseBody
+    String storeimages(@RequestPart("image") MultipartFile file, @PathVariable Integer idBuilding, @RequestParam String name) {
         JsonObject json = new JsonObject();
-        
+
         Map newMap = new Map();
         try {
             newMap.setDescription(name);
@@ -118,7 +116,7 @@ public class MapsController {
             json.addProperty("exception", "Building inexistant : " + e.getId());
             return json.toString();
         }
-        
+
         try {
             String fullFileName = "C:/images/" + idBuilding + "_" + newMap.getId() + ".jpg";
             FileOutputStream fos = new FileOutputStream(fullFileName);
@@ -129,9 +127,25 @@ public class MapsController {
             json.addProperty("success", Boolean.FALSE);
             return json.toString();
         }
-        
+
         json.addProperty("success", Boolean.TRUE);
         json.addProperty("data", new Gson().toJson(new MapPO(newMap)));
         return json.toString();
+    }
+
+    @RequestMapping(value = "/buildings/{idBuilding}/retrieveMap", method = RequestMethod.GET)
+    public void retrieveMap(HttpServletResponse response, @PathVariable Integer idBuilding, @RequestParam Integer idFloor) {
+        byte[] bytes = null;
+        try {
+            File file = new File("C:/images/" + idBuilding + "_" + idFloor + ".jpg");
+            bytes = FileCopyUtils.copyToByteArray(file);
+
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+            response.setContentLength(bytes.length);
+            response.setContentType("image/jpeg");
+            FileCopyUtils.copy(bytes, response.getOutputStream());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

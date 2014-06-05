@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "locations")
@@ -42,6 +44,7 @@ public class Location implements Serializable {
     private Map map;
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy = Rssi.LOCATION_ID)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Rssi> rssis = new HashSet<Rssi>();
     
 

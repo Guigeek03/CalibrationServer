@@ -181,7 +181,13 @@
             <artifactId>httpclient</artifactId>
             <version>4.3.3</version>
         </dependency>
-      
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <scope>compile</scope>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>

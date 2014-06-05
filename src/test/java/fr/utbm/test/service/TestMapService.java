@@ -65,6 +65,7 @@ public class TestMapService {
         
         Assert.assertEquals(2, mapService.getAllMaps().size());
         Assert.assertEquals(2, mapService.getMapsForBuildingID(b.getId()).size());
+        Assert.assertEquals(1, buildingService.getAllBuildings().size());
         Assert.assertEquals(2, b.getMaps().size());
         
         mapService.deleteMapById(m1.getId());

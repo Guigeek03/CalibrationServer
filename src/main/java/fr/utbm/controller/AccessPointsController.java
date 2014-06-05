@@ -1,10 +1,13 @@
 package fr.utbm.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import fr.utbm.calibration.NetworkUtils;
 import fr.utbm.dao.exception.AccessPointAlreadyExistsException;
 import fr.utbm.model.AccessPoint;
 import fr.utbm.service.AccessPointService;
 import java.util.Locale;
+import java.util.Map.Entry;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,4 +37,28 @@ public class AccessPointsController {
         json.addProperty("success", Boolean.TRUE);
         return json.toString();
     }
+
+    public void lookupAccessPoints() {
+        String response = null;
+        Gson gson = new Gson();
+        
+        for (Entry<String, String> arpEntry : NetworkUtils.getArpEntries().entrySet()) {
+            response = NetworkUtils.sendRequest("http://"+arpEntry.getKey()+":8888/checkRouter", 2000, 4000);
+            JsonObject jsonResponse = new Gson().fromJson(response, JsonObject.class);
+            if (!response.equals("") && jsonResponse.get("success").getAsBoolean()) {
+                System.out.println(arpEntry.getKey() + " is a router");
+                AccessPoint newAP = new AccessPoint();
+                newAP.setMacAddr(arpEntry.getValue());
+                try {
+                    apService.createAccessPoint(newAP);
+                } catch (AccessPointAlreadyExistsException ex) {
+                    
+                }
+            } else {
+                System.out.println(arpEntry.getKey());
+            }
+        }
+    }
+
+    
 }

@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "buildings")
@@ -27,6 +29,7 @@ public class Building implements Serializable {
     private String name;
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy = Map.BUILDING_ID)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Map> maps = new HashSet<Map>();
     
     public Building() {

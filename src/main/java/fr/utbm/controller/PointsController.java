@@ -1,16 +1,14 @@
 package fr.utbm.controller;
 
 import com.google.gson.JsonObject;
+import fr.utbm.calibration.NetworkUtils;
 import fr.utbm.model.AccessPoint;
 import fr.utbm.service.AccessPointService;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,54 +17,44 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class PointsController {
+    private HashMap<String, String> arpEntries = new HashMap<String, String>();
 
     @Resource
     AccessPointService apService;
 
     @RequestMapping(value = "/points/add", method = RequestMethod.GET)
-    public @ResponseBody
-    String addPoint(@RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) {
+    public @ResponseBody String addPoint(HttpServletRequest request, @RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) {
         JsonObject json = new JsonObject();
         InputStream is = null;
-
+        
+        // Retrieve user mac address
+        arpEntries = NetworkUtils.getArpEntries();
+        String userIpAddress = request.getRemoteAddr();
+        String userMacAddress = null;
+        String apIPAddress = null;
+        userMacAddress = arpEntries.get(userIpAddress);
+        
+        // Send request to all registered access points
         for (AccessPoint ap : apService.getAllAccessPoints()) {
-            try {
-                URL url = new URL("http://localhost:8080/getRssi?mac="+ap.getMacAddr());
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setReadTimeout(10000 /* milliseconds */);
-                urlConnection.setConnectTimeout(15000 /* milliseconds */);
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setDoInput(true);
-
-                urlConnection.connect();
-                is = urlConnection.getInputStream();
+            if ((apIPAddress = getIPforMac(ap.getMacAddr())) != null) {
+                String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8888/getRssi?mac="+userMacAddress, 10000, 15000);
                 
-	        String contentAsString = readIt(is, is.available());
-	        return contentAsString;
-            } catch (IOException e) {
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        
-                    }
-                }
+                //TODO: Parse response
             }
         }
 
-        //json.addProperty("success", Boolean.FALSE);
         json.addProperty("success", Boolean.TRUE);
-
         return json.toString();
     }
-
-    	// Reads an InputStream and converts it to a String.
-	public static String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-	    Reader reader = null;
-	    reader = new InputStreamReader(stream, "UTF-8");        
-	    char[] buffer = new char[len];
-	    reader.read(buffer);
-	    return new String(buffer);
-	}
+    
+    private String getIPforMac(String macAddress) {
+        String ipAddress = null;
+        for (Entry<String, String> arpEntry : arpEntries.entrySet()) {
+            if (arpEntry.getValue().equals(macAddress)) {
+                ipAddress = arpEntry.getKey();
+                break;
+            }
+        }
+        return ipAddress;
+    }
 }
