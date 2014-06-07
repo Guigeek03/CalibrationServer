@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -139,13 +139,18 @@ public class MapsController {
         try {
             File file = new File("C:/images/" + idBuilding + "_" + idFloor + ".jpg");
             bytes = FileCopyUtils.copyToByteArray(file);
-
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+            System.out.println(bytes.toString());
+            //response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
             response.setContentLength(bytes.length);
+            System.out.println(bytes.length);
             response.setContentType("image/jpeg");
-            FileCopyUtils.copy(bytes, response.getOutputStream());
+            ServletOutputStream sos = response.getOutputStream();
+            sos.write(bytes);
+            //FileCopyUtils.copy(bytes, sos);
+            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        //return null;
     }
 }

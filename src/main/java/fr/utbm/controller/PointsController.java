@@ -1,9 +1,21 @@
 package fr.utbm.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.utbm.calibration.NetworkUtils;
+import fr.utbm.controller.po.AccessPointPO;
+import fr.utbm.controller.po.RssiPO;
+import fr.utbm.dao.exception.AccessPointInexistantException;
+import fr.utbm.dao.exception.LocationAlreadyExistsException;
+import fr.utbm.dao.exception.MapInexistantException;
+import fr.utbm.dao.exception.RssiAlreadyExistsException;
 import fr.utbm.model.AccessPoint;
+import fr.utbm.model.Location;
+import fr.utbm.model.Rssi;
 import fr.utbm.service.AccessPointService;
+import fr.utbm.service.LocationService;
+import fr.utbm.service.MapService;
+import fr.utbm.service.RssiService;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -21,9 +33,18 @@ public class PointsController {
 
     @Resource
     AccessPointService apService;
+    
+    @Resource
+    LocationService locationService;
+    
+    @Resource
+    MapService mapService;
+    
+    @Resource
+    RssiService rssiService;
 
     @RequestMapping(value = "/points/add", method = RequestMethod.GET)
-    public @ResponseBody String addPoint(HttpServletRequest request, @RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) {
+    public @ResponseBody String addPoint(HttpServletRequest request, @RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) throws MapInexistantException, LocationAlreadyExistsException, AccessPointInexistantException, RssiAlreadyExistsException {
         JsonObject json = new JsonObject();
         InputStream is = null;
         
@@ -34,12 +55,27 @@ public class PointsController {
         String apIPAddress = null;
         userMacAddress = arpEntries.get(userIpAddress);
         
+        Location newLocation = new Location();
+        newLocation.setX(x);
+        newLocation.setY(y);
+        newLocation.setMap(mapService.getMapByID(mapId));
+        locationService.createLocation(newLocation);
+        
         // Send request to all registered access points
         for (AccessPoint ap : apService.getAllAccessPoints()) {
             if ((apIPAddress = getIPforMac(ap.getMacAddr())) != null) {
-                String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8888/getRssi?mac="+userMacAddress, 10000, 15000);
+                //String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8888/getRssi?mac="+userMacAddress, 10000, 15000);
+                String response = "{\"ap\": \"" + ap.getMacAddr() + "\",\"rssi\":[{\"macAddr\":\"00:00:00:00:00:00\",\"value\":-54.2,\"samples\":5}]}";
                 
-                //TODO: Parse response
+                Gson gson = new Gson();
+                AccessPointPO answerJSON = gson.fromJson(response, AccessPointPO.class);
+                for (RssiPO rssiPO : answerJSON.getRssis()) {
+                    Rssi rssi = new Rssi();
+                    rssi.setAccessPoint(ap);
+                    rssi.setAverageValue(rssiPO.getValue());
+                    rssi.setLocation(newLocation);
+                    rssiService.createRssi(rssi);
+                }
             }
         }
 
