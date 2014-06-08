@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "accessPoints")
@@ -26,6 +28,7 @@ public class AccessPoint implements Serializable {
     private String macAddr;
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy=Rssi.ACCESS_POINT_ID)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Rssi> rssis = new HashSet<Rssi>();
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy=TempRssi.ACCESS_POINT_ID)
@@ -71,11 +74,10 @@ public class AccessPoint implements Serializable {
         this.tempRssis = tempRssis;
     }
 
-
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 5;
+        hash = 59 * hash + (this.macAddr != null ? this.macAddr.hashCode() : 0);
         return hash;
     }
 
@@ -88,12 +90,14 @@ public class AccessPoint implements Serializable {
             return false;
         }
         final AccessPoint other = (AccessPoint) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+        if ((this.macAddr == null) ? (other.macAddr != null) : !this.macAddr.equals(other.macAddr)) {
             return false;
         }
         return true;
     }
 
+
+  
     @Override
     public String toString() {
         return "AccessPoint{" + "id=" + id + ", macAddr=" + macAddr + '}';

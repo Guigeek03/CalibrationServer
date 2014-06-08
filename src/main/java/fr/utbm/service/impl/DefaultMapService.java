@@ -2,7 +2,6 @@ package fr.utbm.service.impl;
 
 import fr.utbm.dao.BuildingDao;
 import fr.utbm.dao.MapDao;
-import fr.utbm.dao.exception.BuildingInexistantException;
 import fr.utbm.dao.exception.MapAlreadyExistsException;
 import fr.utbm.dao.exception.MapInUseException;
 import fr.utbm.dao.exception.MapInexistantException;
@@ -14,31 +13,30 @@ import javax.annotation.Resource;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class DefaultMapService implements MapService {
+
     @Resource
     SessionFactory sessionFactory;
-    
+
     @Resource
     MapDao mapDao;
-    
+
     @Resource
     BuildingDao buildingDao;
 
     @Override
     public Map createMap(Map map) throws MapAlreadyExistsException {
-        Map m = null;
-        try {
-            m = getMapByName(map.getDescription());
-        } catch(MapInexistantException e) {
-            mapDao.save(map);
-            return map;
+        if (mapDao.getAllMaps().contains(map)) {
+            throw new MapAlreadyExistsException(map.getId(), map.getDescription(), map.getBuilding().getId());
         }
         
-        throw new MapAlreadyExistsException(m.getId(), m.getDescription(), m.getBuilding().getId());
+        mapDao.save(map);
+        return map;
     }
 
     @Override
@@ -68,7 +66,7 @@ public class DefaultMapService implements MapService {
         }
         return list;
     }
-    
+
     @Override
     public List<Map> getMapsForBuildingID(Integer id) {
         List<Map> list = mapDao.getMapsForBuildingID(id);
@@ -95,7 +93,5 @@ public class DefaultMapService implements MapService {
         }
         return map;
     }
-
-
 
 }

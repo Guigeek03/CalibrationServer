@@ -50,7 +50,7 @@ public class Map implements Serializable {
     @Column(name = IMAGE_FILE, columnDefinition = "nvarchar(1000)")
     private String imageFile;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = BUILDING_ID, nullable = false)
     private Building building;
     //@Column(name = BUILDING_ID, nullable = false)
@@ -81,9 +81,9 @@ public class Map implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 89 * hash + (this.building != null ? this.building.hashCode() : 0);
+        int hash = 3;
+        hash = 97 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 97 * hash + (this.building != null ? this.building.hashCode() : 0);
         return hash;
     }
 
@@ -104,7 +104,7 @@ public class Map implements Serializable {
         }
         return true;
     }
-    
+
     public Integer getId() {
         return id;
     }

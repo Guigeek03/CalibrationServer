@@ -13,11 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Table(name = "locations")
+@Table(name = "locations", uniqueConstraints = @UniqueConstraint(columnNames = {Location.X, Location.Y, Location.MAP}))
 public class Location implements Serializable {
     public static final String ID = "id";
     public static final String X = "x";
@@ -109,13 +110,13 @@ public class Location implements Serializable {
     public void setRssis(HashSet<Rssi> rssis) {
         this.rssis = rssis;
     }
-    
-    
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 59 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 5;
+        hash = 17 * hash + (this.x != null ? this.x.hashCode() : 0);
+        hash = 17 * hash + (this.y != null ? this.y.hashCode() : 0);
+        hash = 17 * hash + (this.map != null ? this.map.hashCode() : 0);
         return hash;
     }
 
@@ -128,12 +129,19 @@ public class Location implements Serializable {
             return false;
         }
         final Location other = (Location) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+        if (this.x != other.x && (this.x == null || !this.x.equals(other.x))) {
+            return false;
+        }
+        if (this.y != other.y && (this.y == null || !this.y.equals(other.y))) {
+            return false;
+        }
+        if (this.map != other.map && (this.map == null || !this.map.equals(other.map))) {
             return false;
         }
         return true;
     }
-
+    
+   
     @Override
     public String toString() {
         return "Location{" + "id=" + id + ", x=" + x + ", y=" + y + ", map=" + map.getId() + '}';

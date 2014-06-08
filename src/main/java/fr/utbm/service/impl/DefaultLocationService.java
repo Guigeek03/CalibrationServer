@@ -26,15 +26,12 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location createLocation(Location location) throws LocationAlreadyExistsException {
-        Location l = null;
-        try {
-            l = getLocationByID(location.getId());
-        } catch (LocationInexistantException e) {
-            locationDao.save(location);
-            return location;
+        if (locationDao.getAllLocations().contains(location)) {
+            throw new LocationAlreadyExistsException(location.getId());
         }
         
-        throw new LocationAlreadyExistsException(location.getId());
+        locationDao.save(location);
+        return location;
     }
 
     @Override

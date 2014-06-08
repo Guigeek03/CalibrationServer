@@ -25,15 +25,12 @@ public class DefaultBuildingService implements BuildingService {
 
     @Override
     public Building createBuilding(Building building) throws BuildingAlreadyExistsException {
-        Building b = null;
-        try {
-            b = getBuildingByName(building.getName());
-        } catch (BuildingInexistantException e) {
-            buildingDao.save(building);
-            return building;
+        if (buildingDao.getAllBuildings().contains(building)) {
+            throw new BuildingAlreadyExistsException(building.getId(), building.getName());
         }
         
-        throw new BuildingAlreadyExistsException(building.getId(), building.getName());
+        buildingDao.save(building);
+        return building;
     }
 
     @Override

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class AccessPointPO {
     private String ap;
-    private ArrayList<RssiPO> rssis;
+    private ArrayList<RssiPO> rssi;
 
     public AccessPointPO() {
     }
 
-    public AccessPointPO(String ap, ArrayList<RssiPO> rssis) {
+    public AccessPointPO(String ap, ArrayList<RssiPO> rssi) {
         this.ap = ap;
-        this.rssis = rssis;
+        this.rssi = rssi;
     }
 
     public String getAp() {
@@ -19,14 +19,14 @@ public class AccessPointPO {
     }
 
     public ArrayList<RssiPO> getRssis() {
-        return rssis;
+        return rssi;
     }
 
     public void setAp(String ap) {
         this.ap = ap;
     }
 
-    public void setRssis(ArrayList<RssiPO> rssis) {
-        this.rssis = rssis;
+    public void setRssis(ArrayList<RssiPO> rssi) {
+        this.rssi = rssi;
     }    
 }

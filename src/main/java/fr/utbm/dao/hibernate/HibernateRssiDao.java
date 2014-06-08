@@ -24,6 +24,11 @@ public class HibernateRssiDao extends HibernateDao<Rssi> implements RssiDao {
 
     @Override
     public Rssi getRssiByAPAndLocation(Integer idAP, Integer idLoc) {
-        return (Rssi) getSession().createCriteria(Rssi.class).add(Restrictions.and(Restrictions.eq(Rssi.ACCESS_POINT_ID, idAP), Restrictions.eq(Rssi.LOCATION_ID, idLoc))).uniqueResult();
+        return (Rssi) getSession().createCriteria(Rssi.class).add(Restrictions.and(Restrictions.eq("accessPoint.id", idAP), Restrictions.eq("location.id", idLoc))).uniqueResult();
+    }
+        
+    @Override
+    public List<Rssi> getAllRssisByAP(Integer idAP) {
+        return getSession().createCriteria(Rssi.class).add(Restrictions.eq("accessPoint.id", idAP)).list();
     }
 }

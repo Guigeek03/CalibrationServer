@@ -1,37 +1,37 @@
 package fr.utbm.controller.po;
 
 public class RssiPO {
-    private String macAddr;
+    private String mac;
     private Double value;
-    private Integer nbSambles;
+    private Integer samples;
 
     public RssiPO() {
     }
 
-    public RssiPO(String macAddr, Double value, Integer nbSambles) {
-        this.macAddr = macAddr;
+    public RssiPO(String mac, Double value, Integer samples) {
+        this.mac = mac;
         this.value = value;
-        this.nbSambles = nbSambles;
+        this.samples = samples;
     }
 
-    public String getMacAddr() {
-        return macAddr;
+    public String getMac() {
+        return mac;
     }
 
-    public Integer getNbSambles() {
-        return nbSambles;
+    public Integer getSamples() {
+        return samples;
     }
 
     public Double getValue() {
         return value;
     }
 
-    public void setMacAddr(String macAddr) {
-        this.macAddr = macAddr;
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 
-    public void setNbSambles(Integer nbSambles) {
-        this.nbSambles = nbSambles;
+    public void setSamples(Integer samples) {
+        this.samples = samples;
     }
 
     public void setValue(Double value) {

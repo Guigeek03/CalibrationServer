@@ -26,15 +26,12 @@ public class DefaultAccessPointService implements AccessPointService {
 
     @Override
     public AccessPoint createAccessPoint(AccessPoint accessPoint) throws AccessPointAlreadyExistsException {
-        AccessPoint ap = null;
-        try {
-            ap = getAccessPointByMacAddr(accessPoint.getMacAddr());
-        } catch (AccessPointInexistantException e) {
-            accessPointDao.save(accessPoint);
-            return accessPoint;
+        if (accessPointDao.getAllAccessPoints().contains(accessPoint)) {
+            throw new AccessPointAlreadyExistsException(0, accessPoint.getMacAddr());
         }
 
-        throw new AccessPointAlreadyExistsException(0, accessPoint.getMacAddr());
+        accessPointDao.save(accessPoint);
+        return accessPoint;
     }
 
     @Override

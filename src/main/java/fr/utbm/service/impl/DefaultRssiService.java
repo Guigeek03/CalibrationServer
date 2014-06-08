@@ -16,24 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class DefaultRssiService implements RssiService {    
+public class DefaultRssiService implements RssiService {
+
     @Resource
     SessionFactory sessionFactory;
-    
+
     @Resource
     RssiDao rssiDao;
 
     @Override
     public Rssi createRssi(Rssi rssi) throws RssiAlreadyExistsException {
-        Rssi r = null;
-        try {
-            r = getRssiByAPAndLocation(rssi.getAccessPoint().getId(), rssi.getLocation().getId());
-        } catch (RssiInexistantException e) {
-            rssiDao.save(rssi);
-            return rssi;
-           }
-        
-        throw new RssiAlreadyExistsException(rssi.getId(), rssi.getLocation().getId(), rssi.getAccessPoint().getId());
+        if (rssiDao.getAllRssis().contains(rssi)) {
+            throw new RssiAlreadyExistsException(rssi.getId(), rssi.getLocation().getId(), rssi.getAccessPoint().getId());
+        }
+
+        rssiDao.save(rssi);
+        return rssi;
     }
 
     @Override
@@ -66,19 +64,29 @@ public class DefaultRssiService implements RssiService {
 
     @Override
     public Rssi getRssiByID(Integer id) throws RssiInexistantException {
-       Rssi rssi = rssiDao.getRssiByID(id);
-       if (rssi == null) {
-           throw new RssiInexistantException(id, 0, 0);
-       }
-       return rssi;
+        Rssi rssi = rssiDao.getRssiByID(id);
+        if (rssi == null) {
+            throw new RssiInexistantException(id, 0, 0);
+        }
+        return rssi;
     }
 
     @Override
     public Rssi getRssiByAPAndLocation(Integer idAP, Integer idLoc) throws RssiInexistantException {
-       Rssi rssi = rssiDao.getRssiByAPAndLocation(idAP, idLoc);
-       if (rssi == null) {
-           throw new RssiInexistantException(0, idAP, idLoc);
-       }
-       return rssi;
+        Rssi rssi = rssiDao.getRssiByAPAndLocation(idAP, idLoc);
+        if (rssi == null) {
+            throw new RssiInexistantException(0, idAP, idLoc);
+        }
+        return rssi;
+    }
+    
+    @Override
+    public List<Rssi> getAllRssisByAP(Integer idAP) {
+        List<Rssi> list = rssiDao.getAllRssisByAP(idAP);
+        
+        if (list == null) {
+            return Collections.EMPTY_LIST;
+        }
+        return list;
     }
 }

@@ -17,7 +17,9 @@ import fr.utbm.service.LocationService;
 import fr.utbm.service.MapService;
 import fr.utbm.service.RssiService;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,44 +31,50 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class PointsController {
+
     private HashMap<String, String> arpEntries = new HashMap<String, String>();
 
     @Resource
     AccessPointService apService;
-    
+
     @Resource
     LocationService locationService;
-    
+
     @Resource
     MapService mapService;
-    
+
     @Resource
     RssiService rssiService;
 
     @RequestMapping(value = "/points/add", method = RequestMethod.GET)
-    public @ResponseBody String addPoint(HttpServletRequest request, @RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) throws MapInexistantException, LocationAlreadyExistsException, AccessPointInexistantException, RssiAlreadyExistsException {
+    public @ResponseBody
+    String addPoint(HttpServletRequest request, @RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) throws MapInexistantException, LocationAlreadyExistsException, AccessPointInexistantException, RssiAlreadyExistsException {
         JsonObject json = new JsonObject();
         InputStream is = null;
-        
+
         // Retrieve user mac address
         arpEntries = NetworkUtils.getArpEntries();
         String userIpAddress = request.getRemoteAddr();
         String userMacAddress = null;
         String apIPAddress = null;
         userMacAddress = arpEntries.get(userIpAddress);
-        
+
         Location newLocation = new Location();
         newLocation.setX(x);
         newLocation.setY(y);
         newLocation.setMap(mapService.getMapByID(mapId));
-        locationService.createLocation(newLocation);
-        
+        try {
+            locationService.createLocation(newLocation);
+        } catch (LocationAlreadyExistsException e) {
+            System.out.println("Location already exists : " + newLocation.getX() + " " + newLocation.getY());
+        }
+
         // Send request to all registered access points
         for (AccessPoint ap : apService.getAllAccessPoints()) {
             if ((apIPAddress = getIPforMac(ap.getMacAddr())) != null) {
-                //String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8888/getRssi?mac="+userMacAddress, 10000, 15000);
-                String response = "{\"ap\": \"" + ap.getMacAddr() + "\",\"rssi\":[{\"macAddr\":\"00:00:00:00:00:00\",\"value\":-54.2,\"samples\":5}]}";
-                
+                String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8080/getRssi?mac=" + userMacAddress, 10000, 15000);
+                System.out.println(response);
+
                 Gson gson = new Gson();
                 AccessPointPO answerJSON = gson.fromJson(response, AccessPointPO.class);
                 for (RssiPO rssiPO : answerJSON.getRssis()) {
@@ -74,7 +82,13 @@ public class PointsController {
                     rssi.setAccessPoint(ap);
                     rssi.setAverageValue(rssiPO.getValue());
                     rssi.setLocation(newLocation);
-                    rssiService.createRssi(rssi);
+                    try {
+                        rssiService.createRssi(rssi);
+                    } catch (RssiAlreadyExistsException e) {
+                        json.addProperty("success", Boolean.FALSE);
+                        json.addProperty("exception", "Rssi value for this location already exists");
+                        return json.toString();
+                    }
                 }
             }
         }
@@ -82,7 +96,61 @@ public class PointsController {
         json.addProperty("success", Boolean.TRUE);
         return json.toString();
     }
-    
+
+    @RequestMapping(value = "/locateMe", method = RequestMethod.GET)
+    public @ResponseBody
+    String locateMe(HttpServletRequest request) {
+        JsonObject json = new JsonObject();
+        arpEntries = NetworkUtils.getArpEntries();
+        String userIpAddress = request.getRemoteAddr();
+        String userMacAddress = null;
+        String apIPAddress = null;
+        userMacAddress = arpEntries.get(userIpAddress);
+
+        List<Location> closestLocations = new ArrayList<Location>();
+        for (AccessPoint ap : apService.getAllAccessPoints()) {
+            if ((apIPAddress = getIPforMac(ap.getMacAddr())) != null) {
+                String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8080/getRssi?mac=" + userMacAddress, 10000, 15000);
+                System.out.println(response);
+
+                List<Rssi> listRssi = rssiService.getAllRssisByAP(ap.getId());
+
+                Gson gson = new Gson();
+                AccessPointPO answerJSON = gson.fromJson(response, AccessPointPO.class);
+                for (RssiPO rssiPO : answerJSON.getRssis()) {
+                    Double rssiValue = rssiPO.getValue();
+                    Location closestLocation = null;
+                    Double diff = 0.;
+                    for (Rssi rssiSample : listRssi) {
+                        if (closestLocation == null || Math.abs(rssiSample.getAverageValue() - rssiValue) < diff) {
+                            closestLocation = rssiSample.getLocation();
+                            diff = Math.abs(rssiSample.getAverageValue() - rssiValue);
+                        }
+                    }
+                    closestLocations.add(closestLocation);
+                }
+            }
+        }
+        if (closestLocations.isEmpty()) {
+            json.addProperty("success", Boolean.FALSE);
+            return json.toString();
+        }
+
+        Double avgX = 0.;
+        Double avgY = 0.;
+        for (Location currentLocation : closestLocations) {
+            avgX += currentLocation.getX();
+            avgY += currentLocation.getY();
+        }
+        avgX /= closestLocations.size();
+        avgY /= closestLocations.size();
+
+        json.addProperty("success", Boolean.TRUE);
+        json.addProperty("x", avgX);
+        json.addProperty("y", avgY);
+        return json.toString();
+    }
+
     private String getIPforMac(String macAddress) {
         String ipAddress = null;
         for (Entry<String, String> arpEntry : arpEntries.entrySet()) {

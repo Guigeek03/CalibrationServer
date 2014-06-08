@@ -9,4 +9,6 @@ public interface RssiDao extends Dao<Rssi> {
     public Rssi getRssiByID(Integer id);  
     
     public Rssi getRssiByAPAndLocation(Integer idAP, Integer idLoc);
+    
+    public List<Rssi> getAllRssisByAP(Integer idAP);
 }
