@@ -2,7 +2,7 @@ package fr.utbm.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import fr.utbm.calibration.NetworkUtils;
+import fr.utbm.utils.NetworkUtils;
 import fr.utbm.controller.po.AccessPointPO;
 import fr.utbm.controller.po.RssiPO;
 import fr.utbm.dao.exception.AccessPointInexistantException;

@@ -1,4 +1,4 @@
-package fr.utbm.calibration;
+package fr.utbm.utils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

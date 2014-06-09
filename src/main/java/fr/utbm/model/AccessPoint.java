@@ -31,9 +31,6 @@ public class AccessPoint implements Serializable {
     @Fetch(FetchMode.SUBSELECT)
     private Set<Rssi> rssis = new HashSet<Rssi>();
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy=TempRssi.ACCESS_POINT_ID)
-    private Set<TempRssi> tempRssis = new HashSet<TempRssi>();
-    
     public AccessPoint() {
     }
 
@@ -64,14 +61,6 @@ public class AccessPoint implements Serializable {
 
     public void setRssis(HashSet<Rssi> rssis) {
         this.rssis = rssis;
-    }
-
-    public Set<TempRssi> getTempRssis() {
-        return tempRssis;
-    }
-
-    public void setTempRssis(Set<TempRssi> tempRssis) {
-        this.tempRssis = tempRssis;
     }
 
     @Override

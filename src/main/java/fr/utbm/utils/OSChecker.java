@@ -1,4 +1,4 @@
-package fr.utbm.calibration;
+package fr.utbm.utils;
 
 public class OSChecker {
 
