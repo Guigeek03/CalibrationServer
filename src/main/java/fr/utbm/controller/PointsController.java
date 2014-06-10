@@ -146,7 +146,7 @@ public class PointsController {
             json.addProperty("success", Boolean.FALSE);
             return json.toString();
         }
-
+        
         Double avgX = 0.;
         Double avgY = 0.;
         for (Location currentLocation : closestLocations) {
