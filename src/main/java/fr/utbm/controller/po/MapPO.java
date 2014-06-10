@@ -11,7 +11,7 @@ public class MapPO {
     public MapPO(Map m) {
         this.id = m.getId();
         this.name = m.getDescription();
-        this.nbPoints = 0;
+        this.nbPoints = m.getLocations().size();
     }    
 
     public Integer getId() {

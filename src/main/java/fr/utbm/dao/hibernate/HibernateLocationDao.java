@@ -1,4 +1,3 @@
-
 package fr.utbm.dao.hibernate;
 
 import fr.utbm.dao.LocationDao;
@@ -18,7 +17,12 @@ public class HibernateLocationDao extends HibernateDao<Location> implements Loca
     }
 
     @Override
+    public List<Location> getLocationByMap(Integer mapId) {
+        return getSession().createCriteria(Location.class).add(Restrictions.eq("map.id", mapId)).list();
+    }
+
+    @Override
     public Location getLocationByID(Integer id) {
         return (Location) getSession().createCriteria(Location.class).add(Restrictions.eq(Location.ID, id)).uniqueResult();
-    }    
+    }
 }

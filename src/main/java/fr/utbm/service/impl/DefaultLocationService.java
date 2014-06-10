@@ -61,6 +61,16 @@ public class DefaultLocationService implements LocationService {
         }
         return list;
     }
+    
+    @Override
+    
+    public List<Location> getLocationByMap(Integer mapId) {
+        List<Location> list = locationDao.getLocationByMap(mapId);
+        if (list == null) {
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
 
     @Override
     public Location getLocationByID(Integer id) throws LocationInexistantException {
@@ -70,5 +80,4 @@ public class DefaultLocationService implements LocationService {
         }
         return location;
     }
-
 }

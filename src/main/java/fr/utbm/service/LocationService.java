@@ -16,6 +16,8 @@ public interface LocationService {
 
     public List<Location> getAllLocations();
 
+    public List<Location> getLocationByMap(Integer mapId);
+    
     public Location getLocationByID(Integer id)  throws LocationInexistantException ;
 
 }

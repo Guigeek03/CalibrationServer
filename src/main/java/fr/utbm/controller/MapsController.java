@@ -140,17 +140,13 @@ public class MapsController {
             File file = new File("C:/images/" + idBuilding + "_" + idFloor + ".jpg");
             bytes = FileCopyUtils.copyToByteArray(file);
             System.out.println(bytes.toString());
-            //response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
             response.setContentLength(bytes.length);
             System.out.println(bytes.length);
             response.setContentType("image/jpeg");
             ServletOutputStream sos = response.getOutputStream();
-            sos.write(bytes);
-            //FileCopyUtils.copy(bytes, sos);
-            
+            sos.write(bytes);            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        //return null;
     }
 }

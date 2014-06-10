@@ -33,7 +33,6 @@ public class BuildingsController {
     String getBuildings() {
         ArrayList<BuildingPO> buildings = new ArrayList<BuildingPO>();
         for (Building b : buildingService.getAllBuildings()) {
-            //buildings.add(new BuildingPO(b, mapService.getMapsForBuildingID(b.getId()).size()));
             buildings.add(new BuildingPO(b));
         }
         return new Gson().toJson(buildings);

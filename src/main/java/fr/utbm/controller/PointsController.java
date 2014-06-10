@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.utbm.utils.NetworkUtils;
 import fr.utbm.controller.po.AccessPointPO;
+import fr.utbm.controller.po.LocationPO;
 import fr.utbm.controller.po.RssiPO;
 import fr.utbm.dao.exception.AccessPointInexistantException;
 import fr.utbm.dao.exception.LocationAlreadyExistsException;
@@ -95,6 +96,16 @@ public class PointsController {
 
         json.addProperty("success", Boolean.TRUE);
         return json.toString();
+    }
+    
+    @RequestMapping(value = "/points/getSavedPoints", method = RequestMethod.GET)
+    public @ResponseBody
+    String getSavedPoints(@RequestParam Integer mapId) throws MapInexistantException, LocationAlreadyExistsException, AccessPointInexistantException, RssiAlreadyExistsException {
+            ArrayList<LocationPO> locations = new ArrayList<LocationPO>();
+            for (Location l : locationService.getLocationByMap(mapId)) {
+                locations.add(new LocationPO(l));
+            }
+            return new Gson().toJson(locations);
     }
 
     @RequestMapping(value = "/locateMe", method = RequestMethod.GET)

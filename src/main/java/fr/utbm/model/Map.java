@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "maps", uniqueConstraints = @UniqueConstraint(columnNames = {Map.BUILDING_ID, Map.DESCRIPTION}))
@@ -53,10 +55,9 @@ public class Map implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = BUILDING_ID, nullable = false)
     private Building building;
-    //@Column(name = BUILDING_ID, nullable = false)
-    //private Integer building;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy=Location.MAP)
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy=Location.MAP)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Location> locations = new HashSet<Location>();
    
     public Map() {
@@ -68,7 +69,6 @@ public class Map implements Serializable {
         this.imageFile = "";
     }
 
-   //public Map(String description, Integer pxWidth, Integer pxHeight, Double metersWidth, Double metersHeight, String imageFile, Integer building) {
    public Map(String description, Integer pxWidth, Integer pxHeight, Double metersWidth, Double metersHeight, String imageFile, Building building) {
         this.description = description;
         this.pxWidth = pxWidth;
