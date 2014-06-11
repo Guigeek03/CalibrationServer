@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +42,8 @@ public class MapsController {
     @Resource
     MapService mapService;
 
+    private static final String imageDirectory = "C:/images/";
+    
     /**
      * Retrieves maps for the given building id
      *
@@ -59,41 +60,7 @@ public class MapsController {
         return new Gson().toJson(maps);
     }
 
-    /**
-     * Adds map with given name, pxWidth and pxHeight for the specific building
-     *
-     * @param id the building id
-     * @param name the name of the new map
-     * @param pxWidth the width (in pixel) of the new map
-     * @param pxHeight the height (in pixel) of the new map
-     * @return a JSON response
-     */
-    @RequestMapping(value = "/buildings/{id}/add", method = RequestMethod.GET)
-    public @ResponseBody
-    String addMap(@PathVariable Integer id, @RequestParam String name, @RequestParam Integer pxWidth, @RequestParam Integer pxHeight) {
-        JsonObject json = new JsonObject();
-        Map newMap = new Map();
-        try {
-            newMap.setDescription(name);
-            newMap.setBuilding(buildingService.getBuildingByID(id));
-            newMap.setPxHeight(pxHeight);
-            newMap.setPxWidth(pxWidth);
-
-            newMap = mapService.createMap(newMap);
-        } catch (MapAlreadyExistsException e) {
-            json.addProperty("success", Boolean.FALSE);
-            json.addProperty("exception", "Map already exists : " + e.getName());
-            return json.toString();
-        } catch (BuildingInexistantException e) {
-            json.addProperty("success", Boolean.FALSE);
-            json.addProperty("exception", "Building inexistant : " + e.getId());
-            return json.toString();
-        }
-        json.addProperty("success", Boolean.TRUE);
-        json.addProperty("data", new Gson().toJson(new MapPO(newMap)));
-        return json.toString();
-    }
-
+    
     /**
      * Deletes a map with given building id and id
      *
@@ -107,6 +74,10 @@ public class MapsController {
         JsonObject json = new JsonObject();
         try {
             mapService.deleteMapById(id);
+            File file = new File(imageDirectory + idBuilding + "_" + id + ".jpg");
+            if (file.exists()) {
+                file.delete();
+            }
             json.addProperty("success", Boolean.TRUE);
         } catch (MapInexistantException e) {
             json.addProperty("success", Boolean.FALSE);
@@ -130,15 +101,15 @@ public class MapsController {
      */
     @RequestMapping(value = "/buildings/{idBuilding}/addMap", method = RequestMethod.POST)
     public @ResponseBody
-    String storeimages(@RequestPart("image") MultipartFile file, @PathVariable Integer idBuilding, @RequestParam String name) {
+    String addMap(@RequestPart("image") MultipartFile file, @PathVariable Integer idBuilding, @RequestParam String name, @RequestParam Integer pxWidth, @RequestParam Integer pxHeight) {
         JsonObject json = new JsonObject();
 
         Map newMap = new Map();
         try {
             newMap.setDescription(name);
             newMap.setBuilding(buildingService.getBuildingByID(idBuilding));
-            newMap.setPxHeight(0);
-            newMap.setPxWidth(0);
+            newMap.setPxHeight(pxHeight);
+            newMap.setPxWidth(pxWidth);
 
             newMap = mapService.createMap(newMap);
         } catch (MapAlreadyExistsException e) {
@@ -152,7 +123,7 @@ public class MapsController {
         }
 
         try {
-            String fullFileName = "C:/images/" + idBuilding + "_" + newMap.getId() + ".jpg";
+            String fullFileName = imageDirectory + idBuilding + "_" + newMap.getId() + ".jpg";
             FileOutputStream fos = new FileOutputStream(fullFileName);
             fos.write(file.getBytes());
             fos.close();
@@ -176,7 +147,7 @@ public class MapsController {
     public void retrieveMap(HttpServletResponse response, @PathVariable Integer idBuilding, @RequestParam Integer idFloor) {
         byte[] bytes = null;
         try {
-            File file = new File("C:/images/" + idBuilding + "_" + idFloor + ".jpg");
+            File file = new File(imageDirectory + idBuilding + "_" + idFloor + ".jpg");
             bytes = FileCopyUtils.copyToByteArray(file);
             response.setContentLength(bytes.length);
             response.setContentType("image/jpeg");
