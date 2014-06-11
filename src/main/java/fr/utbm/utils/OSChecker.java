@@ -1,5 +1,10 @@
 package fr.utbm.utils;
 
+/**
+ * Utilities class to check the OS running the server
+ * 
+ * @author Guigeek
+ */
 public class OSChecker {
 
     private static String OS = System.getProperty("os.name").toLowerCase();

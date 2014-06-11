@@ -2,6 +2,11 @@ package fr.utbm.controller.po;
 
 import fr.utbm.model.Location;
 
+/**
+ * Location Presentation Objects for JSON responses
+ * 
+ * @author Guigeek
+ */
 public class LocationPO {
     private Integer id;
     private Double x;

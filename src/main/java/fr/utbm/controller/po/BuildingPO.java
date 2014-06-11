@@ -2,6 +2,11 @@ package fr.utbm.controller.po;
 
 import fr.utbm.model.Building;
 
+/**
+ * Building Presentation Objects for JSON responses
+ * 
+ * @author Guigeek
+ */
 public class BuildingPO {
     
     private Integer id;

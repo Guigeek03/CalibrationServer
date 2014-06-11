@@ -5,7 +5,13 @@ import fr.utbm.model.Building;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Hibernate implementation of Building DAO interface
+ * 
+ * @author Guigeek
+ */
 @Component
 public class HibernateBuildingDao extends HibernateDao<Building> implements BuildingDao {	
     @Override

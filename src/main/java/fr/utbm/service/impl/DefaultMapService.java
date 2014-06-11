@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -74,15 +73,6 @@ public class DefaultMapService implements MapService {
             return Collections.EMPTY_LIST;
         }
         return list;
-    }
-
-    @Override
-    public Map getMapByName(String name) throws MapInexistantException {
-        Map map = mapDao.getMapByName(name);
-        if (map == null) {
-            throw new MapInexistantException(0, name, 0);
-        }
-        return map;
     }
 
     @Override

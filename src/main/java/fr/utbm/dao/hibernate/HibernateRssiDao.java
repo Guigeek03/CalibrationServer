@@ -8,8 +8,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Hibernate implementation of RSSI DAO interface
+ * 
+ * @author Guigeek
+ */
 @Component
-@Transactional
 public class HibernateRssiDao extends HibernateDao<Rssi> implements RssiDao {
 
     @Override

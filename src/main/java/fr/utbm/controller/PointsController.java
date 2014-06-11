@@ -30,6 +30,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Controller for calibration point's management
+ * 
+ * @author Guigeek
+ */
 @Controller
 public class PointsController {
 
@@ -47,6 +52,18 @@ public class PointsController {
     @Resource
     RssiService rssiService;
 
+    /**
+     * Add locations to the database
+     * @param request the HTTP request
+     * @param x the x coordinate of the new location
+     * @param y the y coordinate of the new location
+     * @param mapId the map id
+     * @return a JSON response
+     * @throws MapInexistantException
+     * @throws LocationAlreadyExistsException
+     * @throws AccessPointInexistantException
+     * @throws RssiAlreadyExistsException 
+     */
     @RequestMapping(value = "/points/add", method = RequestMethod.GET)
     public @ResponseBody
     String addPoint(HttpServletRequest request, @RequestParam Double x, @RequestParam Double y, @RequestParam Integer mapId) throws MapInexistantException, LocationAlreadyExistsException, AccessPointInexistantException, RssiAlreadyExistsException {
@@ -60,6 +77,7 @@ public class PointsController {
         String apIPAddress = null;
         userMacAddress = arpEntries.get(userIpAddress);
 
+        // Create the new location
         Location newLocation = new Location();
         newLocation.setX(x);
         newLocation.setY(y);
@@ -74,8 +92,8 @@ public class PointsController {
         for (AccessPoint ap : apService.getAllAccessPoints()) {
             if ((apIPAddress = getIPforMac(ap.getMacAddr())) != null) {
                 String response = NetworkUtils.sendRequest("http://" + apIPAddress + ":8080/getRssi?mac=" + userMacAddress, 10000, 15000);
-                System.out.println(response);
-
+                
+                // Create RSSI measurement for this location
                 Gson gson = new Gson();
                 AccessPointPO answerJSON = gson.fromJson(response, AccessPointPO.class);
                 for (RssiPO rssiPO : answerJSON.getRssis()) {
@@ -98,6 +116,15 @@ public class PointsController {
         return json.toString();
     }
     
+    /**
+     * Retrieves all saved points (locations) for a specific map
+     * @param mapId the map id
+     * @return a JSON array of locations
+     * @throws MapInexistantException
+     * @throws LocationAlreadyExistsException
+     * @throws AccessPointInexistantException
+     * @throws RssiAlreadyExistsException 
+     */
     @RequestMapping(value = "/points/getSavedPoints", method = RequestMethod.GET)
     public @ResponseBody
     String getSavedPoints(@RequestParam Integer mapId) throws MapInexistantException, LocationAlreadyExistsException, AccessPointInexistantException, RssiAlreadyExistsException {
@@ -108,6 +135,11 @@ public class PointsController {
             return new Gson().toJson(locations);
     }
 
+    /**
+     * Computes the location of a user
+     * @param request the HTTP request
+     * @return a JSON response containing the coordinates of the user
+     */
     @RequestMapping(value = "/locateMe", method = RequestMethod.GET)
     public @ResponseBody
     String locateMe(HttpServletRequest request) {
@@ -162,6 +194,11 @@ public class PointsController {
         return json.toString();
     }
 
+    /** 
+     * Get an IP address for the given mac address
+     * @param macAddress the mac address
+     * @return the ip address
+     */
     private String getIPforMac(String macAddress) {
         String ipAddress = null;
         for (Entry<String, String> arpEntry : arpEntries.entrySet()) {

@@ -5,7 +5,13 @@ import fr.utbm.model.Map;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Hibernate implementation of Map DAO interface
+ * 
+ * @author Guigeek
+ */
 @Component
 public class HibernateMapDao extends HibernateDao<Map> implements MapDao {	
     @Override
@@ -16,11 +22,6 @@ public class HibernateMapDao extends HibernateDao<Map> implements MapDao {
     @Override
     public List<Map> getMapsForBuildingID(Integer id) {
         return getSession().createCriteria(Map.class).add(Restrictions.eq("building.id", id)).list();
-    }
-
-    @Override
-    public Map getMapByName(String name) {
-         return (Map) getSession().createCriteria(Map.class).add(Restrictions.eq(Map.DESCRIPTION, name)).uniqueResult();
     }
 
     @Override

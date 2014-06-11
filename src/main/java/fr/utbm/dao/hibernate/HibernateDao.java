@@ -10,7 +10,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+/**
+ * Hibernate implementation of Generic DAO interface
+ * 
+ * @author Guigeek
+ */
 public abstract class HibernateDao<T> implements Dao<T> {
 
     protected Class clazz;
@@ -19,7 +23,6 @@ public abstract class HibernateDao<T> implements Dao<T> {
     protected SessionFactory sessionFactory;
 
     public void setEntityClass(final Class clazz) {
-        // TODO Setting entity class
         this.clazz = clazz;
     }
 

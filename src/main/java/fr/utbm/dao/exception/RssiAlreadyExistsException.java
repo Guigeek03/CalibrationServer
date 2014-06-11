@@ -1,6 +1,5 @@
 package fr.utbm.dao.exception;
 
-
 public class RssiAlreadyExistsException extends Exception {
     private final Integer id;
     private final Integer idLocation;

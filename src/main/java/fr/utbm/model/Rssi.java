@@ -12,26 +12,27 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+/**
+ * Rssi model object
+ * 
+ * @author Guigeek
+ */
 @Entity
 @Table(name = "rssi", uniqueConstraints = @UniqueConstraint(columnNames = {Rssi.ACCESS_POINT_ID, Rssi.LOCATION_ID}))
 public class Rssi implements Serializable {
 
+    // Column names in the database
     public static final String ID = "id";
     public static final String ACCESS_POINT_ID = "accessPoint";
     public static final String LOCATION_ID = "location";
     public static final String AVERAGE_VALUE = "avgVal";
     public static final String STANDARD_DEVIATION = "stdDev";
 
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    /**@Column(name = ACCESS_POINT_ID, nullable = false)
-    private Integer accessPointId;
-
-    @Column(name = LOCATION_ID)
-    private Integer locationId;**/
-    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = LOCATION_ID, nullable = false)
     private Location location;
@@ -46,27 +47,10 @@ public class Rssi implements Serializable {
     @Column(name = STANDARD_DEVIATION)
     private Double standardDeviation;
 
+    // Constructors
     public Rssi() {
     }
 
-    /** public Rssi(Integer accessPointId, Integer locationId, Double averageValue, Double standardDeviation) {
-    this.accessPointId = accessPointId;
-    this.locationId = locationId;
-    this.averageValue = averageValue;
-    this.standardDeviation = standardDeviation;
-    }
-    public Integer getAccessPointId() {
-    return accessPointId;
-    }
-    public void setAccessPointId(Integer accessPointId) {
-    this.accessPointId = accessPointId;
-    }
-    public Integer getLocationId() {
-    return locationId;
-    }
-    public void setLocationId(Integer locationId) {
-    this.locationId = locationId;
-    }**/
     public Rssi(Location location, AccessPoint accessPoint, Double averageValue, Double standardDeviation) {
         this.location = location;
         this.accessPoint = accessPoint;
@@ -74,6 +58,7 @@ public class Rssi implements Serializable {
         this.standardDeviation = standardDeviation;
     }
 
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -114,11 +99,7 @@ public class Rssi implements Serializable {
         this.standardDeviation = standardDeviation;
     }
 
-    @Override
-    public String toString() {
-        return "Rssi{" + "id=" + id + ", location=" + location + ", accessPoint=" + accessPoint + ", averageValue=" + averageValue + ", standardDeviation=" + standardDeviation + '}';
-    }
-
+    // hashCode, equals and toString()
     @Override
     public int hashCode() {
         int hash = 7;
@@ -144,4 +125,10 @@ public class Rssi implements Serializable {
         }
         return true;
     }
+    
+    @Override
+    public String toString() {
+        return "Rssi{" + "id=" + id + ", location=" + location + ", accessPoint=" + accessPoint + ", averageValue=" + averageValue + ", standardDeviation=" + standardDeviation + '}';
+    }
+
 }

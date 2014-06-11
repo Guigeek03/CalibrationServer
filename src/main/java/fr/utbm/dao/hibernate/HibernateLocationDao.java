@@ -7,8 +7,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Hibernate implementation of Location DAO interface
+ * 
+ * @author Guigeek
+ */
 @Component
-@Transactional
 public class HibernateLocationDao extends HibernateDao<Location> implements LocationDao {
 
     @Override

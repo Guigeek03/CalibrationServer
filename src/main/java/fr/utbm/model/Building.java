@@ -15,12 +15,20 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+/**
+ * Building model object
+ * 
+ * @author Guigeek
+ */
 @Entity
 @Table(name = "buildings")
 public class Building implements Serializable {
+    
+    // Column names in the database
     public static final String ID = "id";
     public static final String NAME = "name";
 
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -32,6 +40,7 @@ public class Building implements Serializable {
     @Fetch(FetchMode.SUBSELECT)
     private Set<Map> maps = new HashSet<Map>();
     
+    // Constructors
     public Building() {
     }
 
@@ -39,12 +48,7 @@ public class Building implements Serializable {
         this.name = name;
     }
     
-    /**public Building(Integer id, String name, Set<Map> maps) {
-        this.id = id;
-        this.name = name;
-        this.maps = maps;
-    }**/
-
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -69,6 +73,7 @@ public class Building implements Serializable {
         this.maps = maps;
     }
 
+    // hashCode, equals and toString override
     @Override
     public int hashCode() {
         int hash = 5;
@@ -90,7 +95,9 @@ public class Building implements Serializable {
         }
         return true;
     }
-    
-    
 
+    @Override
+    public String toString() {
+        return "Building{" + "id=" + id + ", name=" + name + '}';
+    }
 }

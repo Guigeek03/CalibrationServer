@@ -14,12 +14,21 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+/**
+ * Access point model object
+ * 
+ * @author Guigeek
+ */
 @Entity
 @Table(name = "accessPoints")
 public class AccessPoint implements Serializable {
+    
+    // Column names in the database
     public static final String ID = "id";
     public static final String MAC_ADDR = "macAddr";
     
+    
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -31,6 +40,7 @@ public class AccessPoint implements Serializable {
     @Fetch(FetchMode.SUBSELECT)
     private Set<Rssi> rssis = new HashSet<Rssi>();
     
+    //Constructors
     public AccessPoint() {
     }
 
@@ -39,6 +49,7 @@ public class AccessPoint implements Serializable {
         this.macAddr = macAddr;
     }
 
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -63,6 +74,7 @@ public class AccessPoint implements Serializable {
         this.rssis = rssis;
     }
 
+    // hashCode, equals and toString override
     @Override
     public int hashCode() {
         int hash = 5;
@@ -85,8 +97,6 @@ public class AccessPoint implements Serializable {
         return true;
     }
 
-
-  
     @Override
     public String toString() {
         return "AccessPoint{" + "id=" + id + ", macAddr=" + macAddr + '}';

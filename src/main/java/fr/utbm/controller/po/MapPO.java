@@ -2,6 +2,11 @@ package fr.utbm.controller.po;
 
 import fr.utbm.model.Map;
 
+/**
+ * Map Presentation Objects for JSON responses
+ * 
+ * @author Guigeek
+ */
 public class MapPO {
     
     private Integer id;

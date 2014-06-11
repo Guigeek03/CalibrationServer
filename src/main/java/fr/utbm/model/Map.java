@@ -17,10 +17,16 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+/**
+ * Map model object
+ * 
+ * @author Guigeek
+ */
 @Entity
 @Table(name = "maps", uniqueConstraints = @UniqueConstraint(columnNames = {Map.BUILDING_ID, Map.DESCRIPTION}))
 public class Map implements Serializable {
 
+    // Column names in the database
     public static final String ID = "id";
     public static final String DESCRIPTION = "description";
     public static final String PX_WIDTH = "pxWidth";
@@ -30,6 +36,7 @@ public class Map implements Serializable {
     public static final String IMAGE_FILE = "imageFile";
     public static final String BUILDING_ID = "building";
 
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -60,6 +67,7 @@ public class Map implements Serializable {
     @Fetch(FetchMode.SUBSELECT)
     private Set<Location> locations = new HashSet<Location>();
    
+    // Constructors
     public Map() {
         this.description = "";
         this.pxWidth = 0;
@@ -79,32 +87,7 @@ public class Map implements Serializable {
         this.building = building;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 97 * hash + (this.building != null ? this.building.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Map other = (Map) obj;
-        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
-            return false;
-        }
-        if (this.building != other.building && (this.building == null || !this.building.equals(other.building))) {
-            return false;
-        }
-        return true;
-    }
-
+    // Fields
     public Integer getId() {
         return id;
     }
@@ -175,5 +158,37 @@ public class Map implements Serializable {
 
     public void setLocations(Set<Location> locations) {
         this.locations = locations;
+    }
+    
+    // hashCode, equals and toString override
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 97 * hash + (this.building != null ? this.building.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Map other = (Map) obj;
+        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
+            return false;
+        }
+        if (this.building != other.building && (this.building == null || !this.building.equals(other.building))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Map{" + "id=" + id + ", description=" + description + ", pxWidth=" + pxWidth + ", pxHeight=" + pxHeight + ", building=" + building + '}';
     }
 }

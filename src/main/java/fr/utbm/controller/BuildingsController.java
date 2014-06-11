@@ -10,7 +10,6 @@ import fr.utbm.model.Building;
 import fr.utbm.service.BuildingService;
 import fr.utbm.service.MapService;
 import java.util.ArrayList;
-import java.util.Locale;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +17,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Controller for building's management
+ *
+ * @author Guigeek
+ */
 @Controller
 public class BuildingsController {
 
     @Resource
     BuildingService buildingService;
-    
+
     @Resource
     MapService mapService;
-    
 
+    /**
+     * Returns the list of all buildings stored in the database
+     *
+     * @return a JSON array of buildings
+     */
     @RequestMapping(value = "/buildings", method = RequestMethod.GET)
     public @ResponseBody
     String getBuildings() {
@@ -38,8 +46,15 @@ public class BuildingsController {
         return new Gson().toJson(buildings);
     }
 
+    /**
+     * Adds building with the given name
+     *
+     * @param name the name of the new building
+     * @return a JSON response
+     */
     @RequestMapping(value = "/buildings/add", method = RequestMethod.GET)
-    public @ResponseBody String addBuilding(@RequestParam String name, Locale l) {
+    public @ResponseBody
+    String addBuilding(@RequestParam String name) {
         JsonObject json = new JsonObject();
         Building newBuilding = new Building();
         newBuilding.setName(name);
@@ -55,8 +70,15 @@ public class BuildingsController {
         return json.toString();
     }
 
+    /**
+     * Deletes the building with the given id
+     *
+     * @param id the id of the building to delete
+     * @return a JSON response
+     */
     @RequestMapping(value = "/buildings/delete", method = RequestMethod.GET)
-    public @ResponseBody String deleteBuilding(@RequestParam Integer id, Locale l) {
+    public @ResponseBody
+    String deleteBuilding(@RequestParam Integer id) {
         JsonObject json = new JsonObject();
         try {
             buildingService.deleteBuildingById(id);

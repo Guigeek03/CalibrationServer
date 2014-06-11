@@ -29,6 +29,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Controller for map's management
+ *
+ * @author Guigeek
+ */
 @Controller
 public class MapsController {
 
@@ -38,6 +43,12 @@ public class MapsController {
     @Resource
     MapService mapService;
 
+    /**
+     * Retrieves maps for the given building id
+     *
+     * @param id the building id
+     * @return a JSON array of maps
+     */
     @RequestMapping(value = "/buildings/{id}", method = RequestMethod.GET)
     public @ResponseBody
     String getMaps(@PathVariable Integer id) {
@@ -48,9 +59,18 @@ public class MapsController {
         return new Gson().toJson(maps);
     }
 
+    /**
+     * Adds map with given name, pxWidth and pxHeight for the specific building
+     *
+     * @param id the building id
+     * @param name the name of the new map
+     * @param pxWidth the width (in pixel) of the new map
+     * @param pxHeight the height (in pixel) of the new map
+     * @return a JSON response
+     */
     @RequestMapping(value = "/buildings/{id}/add", method = RequestMethod.GET)
     public @ResponseBody
-    String addMap(@PathVariable Integer id, @RequestParam String name, @RequestParam Integer pxWidth, @RequestParam Integer pxHeight, Locale l) {
+    String addMap(@PathVariable Integer id, @RequestParam String name, @RequestParam Integer pxWidth, @RequestParam Integer pxHeight) {
         JsonObject json = new JsonObject();
         Map newMap = new Map();
         try {
@@ -74,9 +94,16 @@ public class MapsController {
         return json.toString();
     }
 
+    /**
+     * Deletes a map with given building id and id
+     *
+     * @param idBuilding the building id
+     * @param id the map id
+     * @return a JSON response
+     */
     @RequestMapping(value = "/buildings/{idBuilding}/delete", method = RequestMethod.GET)
     public @ResponseBody
-    String deleteBuilding(@PathVariable Integer idBuilding, @RequestParam Integer id, Locale l) {
+    String deleteBuilding(@PathVariable Integer idBuilding, @RequestParam Integer id) {
         JsonObject json = new JsonObject();
         try {
             mapService.deleteMapById(id);
@@ -94,6 +121,13 @@ public class MapsController {
         return json.toString();
     }
 
+    /**
+     * Receives a new map (with image file) and stores it in the database
+     * @param file the image file
+     * @param idBuilding the building id
+     * @param name the name of the map
+     * @return a JSON response
+     */
     @RequestMapping(value = "/buildings/{idBuilding}/addMap", method = RequestMethod.POST)
     public @ResponseBody
     String storeimages(@RequestPart("image") MultipartFile file, @PathVariable Integer idBuilding, @RequestParam String name) {
@@ -122,8 +156,7 @@ public class MapsController {
             FileOutputStream fos = new FileOutputStream(fullFileName);
             fos.write(file.getBytes());
             fos.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException ex) {
             json.addProperty("success", Boolean.FALSE);
             return json.toString();
         }
@@ -133,20 +166,23 @@ public class MapsController {
         return json.toString();
     }
 
+    /**
+     * Sends a map
+     * @param response the HTTP response
+     * @param idBuilding the building id
+     * @param idFloor the floor id
+     */
     @RequestMapping(value = "/buildings/{idBuilding}/retrieveMap", method = RequestMethod.GET)
     public void retrieveMap(HttpServletResponse response, @PathVariable Integer idBuilding, @RequestParam Integer idFloor) {
         byte[] bytes = null;
         try {
             File file = new File("C:/images/" + idBuilding + "_" + idFloor + ".jpg");
             bytes = FileCopyUtils.copyToByteArray(file);
-            System.out.println(bytes.toString());
             response.setContentLength(bytes.length);
-            System.out.println(bytes.length);
             response.setContentType("image/jpeg");
             ServletOutputStream sos = response.getOutputStream();
-            sos.write(bytes);            
+            sos.write(bytes);
         } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 }

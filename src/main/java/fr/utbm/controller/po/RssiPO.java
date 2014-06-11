@@ -1,5 +1,10 @@
 package fr.utbm.controller.po;
 
+/**
+ * RSSI Presentation Objects for JSON responses
+ * 
+ * @author Guigeek
+ */
 public class RssiPO {
     private String mac;
     private Double value;

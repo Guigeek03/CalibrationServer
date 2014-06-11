@@ -96,9 +96,4 @@ public class TestMapService {
     public void getInexistantMapById() throws MapInexistantException {
         mapService.getMapByID(99);
     }
-    
-    @Test(expected = MapInexistantException.class)
-    public void getInexistantMapByName() throws MapInexistantException {
-        mapService.getMapByName("XXX");
-    }
 }

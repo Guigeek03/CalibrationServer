@@ -2,6 +2,11 @@ package fr.utbm.controller.po;
 
 import java.util.ArrayList;
 
+/**
+ * Access Point Presentation Objects for JSON responses
+ * 
+ * @author Guigeek
+ */
 public class AccessPointPO {
     private String ap;
     private ArrayList<RssiPO> rssi;

@@ -7,8 +7,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Hibernate implementation of Access Point DAO interface
+ * 
+ * @author Guigeek
+ */
 @Component
-@Transactional
 public class HibernateAccessPointDao extends HibernateDao<AccessPoint> implements AccessPointDao {	
 
     @Override

@@ -43,22 +43,6 @@ public class DefaultBuildingService implements BuildingService {
     }
 
     @Override
-    public void updateBuilding(Integer id, String newName) throws BuildingAlreadyExistsException, BuildingInexistantException {
-        Building building = buildingDao.getBuildingByID(id);
-        if (!building.getName().equals("DEFAULT")) {
-            building.setName(newName);
-            try {
-                buildingDao.save(building);
-            } catch (ConstraintViolationException e) {
-                throw new BuildingAlreadyExistsException(id, newName);
-            }
-        }
-        else {
-            throw new BuildingInexistantException(id, "");
-        }
-    }
-
-    @Override
     public void deleteBuildingById(Integer id) throws BuildingInexistantException, BuildingInUseException {
         Building building = buildingDao.getBuildingByID(id);
         if (building != null) {
